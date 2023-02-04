@@ -4,19 +4,14 @@ import os
 _leangle_schemas = []
 
 # Patches
-# On AWS, chalice does not include deploy, so ignore patching it.
-try:
-    from .chalice_patches import patch_generate_route_method, patch_generate_swagger  # NOQA
-    if 'LAMBDA_TASK_ROOT' in os.environ:
-        from chalice_utils.swagger import SwaggerGenerator # NOQA
-    else:
-        from chalice.deploy.swagger import SwaggerGenerator # NOQA
+from .chalice_patches import patch_generate_route_method, patch_generate_swagger  # NOQA
+if 'LAMBDA_TASK_ROOT' in os.environ:
+    from chalice_utils.swagger import SwaggerGenerator # NOQA
+else:
+    from chalice.deploy.swagger import SwaggerGenerator # NOQA
 
-    SwaggerGenerator.generate_swagger = patch_generate_swagger()
-    SwaggerGenerator._generate_route_method = patch_generate_route_method()
-
-except ImportError:
-    pass
+SwaggerGenerator.generate_swagger = patch_generate_swagger()
+SwaggerGenerator._generate_route_method = patch_generate_route_method()
 
 
 def add_schema() -> Callable:
