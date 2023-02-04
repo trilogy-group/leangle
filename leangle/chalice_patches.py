@@ -23,11 +23,19 @@ def patch_generate_swagger() -> Callable:
         return api
     return generate_swagger
 
+def _dict_sweep(input_dict, key):
+    if isinstance(input_dict, dict):
+        return {k: _dict_sweep(v, key) for k, v in input_dict.items() if k != key}
+    elif isinstance(input_dict, list):
+        return [_dict_sweep(element, key) for element in input_dict]
+    else:
+        return input_dict
 
 def _add_leangle_schemas(api: Dict):
     """Add schema dumps to the API."""
     for schema in _leangle_schemas:
-        api['definitions'].update(JSONSchema().dump(schema())['definitions'])
+        schema_dump = JSONSchema().dump(schema())['definitions']
+        api['definitions'].update(_dict_sweep(schema_dump, 'readOnly'))
     return api
 
 
