@@ -1,5 +1,5 @@
 from typing import Callable
-
+import os
 
 _leangle_schemas = []
 
@@ -7,7 +7,10 @@ _leangle_schemas = []
 # On AWS, chalice does not include deploy, so ignore patching it.
 try:
     from .chalice_patches import patch_generate_route_method, patch_generate_swagger  # NOQA
-    from chalice.deploy.swagger import SwaggerGenerator # NOQA
+    if 'LAMBDA_TASK_ROOT' in os.environ:
+        from chalice_utils.swagger import SwaggerGenerator # NOQA
+    else:
+        from chalice.deploy.swagger import SwaggerGenerator # NOQA
 
     SwaggerGenerator.generate_swagger = patch_generate_swagger()
     SwaggerGenerator._generate_route_method = patch_generate_route_method()
