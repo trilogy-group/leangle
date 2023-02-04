@@ -19,7 +19,7 @@ extras_require = {
 
 setup(
     name='leangle',
-    version='0.2.2',
+    version='0.3',
     description='Add response descriptions to chalice',
     long_description=read('README.rst'),
     author='Joshua Fehler',
